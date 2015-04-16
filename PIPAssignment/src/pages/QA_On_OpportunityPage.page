@@ -1,20 +1,62 @@
-<apex:page Controller="QA_On_OpportunityController" sidebar="false">
+<apex:page extensions="QA_On_OpportunityController" standardController="Opportunity" sidebar="false">
+
 	<apex:form >
-		<apex:outPutPanel >
-			<apex:outputPanel rendered="{!pageMessage}">
-				<apex:pageMessages />
-			</apex:outPutPanel>
-			<apex:outPutPanel >
-				No Of Answered Question : 
-			</apex:OutPutPanel>
-			<apex:OutputPanel >
-				<apex:repeat value="{!lstOfQA_On_OpportunityWrapper}" var="lstAnswerWrapper">
-					<apex:OutPutText value="{!lstAnswerWrapper.objQuestion}"/>
-					<apex:inputText value="{!lstAnswerWrapper.objAnswer}" rendered="{If(!lstAnswerWrapper.strQuestionType =='Text',true,false)}"/>
-					<apex:inputCheckBox value="{!lstAnswerWrapper.objAnswer}" rendered="{If(!objAnswer.strQuestionType =='CheckBox',true,false)}"/>
-					<apex:selectList value="{!lstAnswerWrapper.objAnswer}" rendered="{If(!objAnswer.strQuestionType =='Picklist',true,false)}"/>
-				</apex:repeat> 
-			</apex:OutputPanel>
-		</apex:outPutPanel>
+		<!-- 	---------Start Of First block------------------------------------      -->
+		<apex:PageBlock >
+			<div >
+				<p>
+					<b>No Of Answered Question 		: {!FLOOR(Opportunity.ShowAnsweredCount__c)}</b>
+				</p>
+				<p> 
+					<b>No Of UnAnswered Question 	: {!FLOOR(Opportunity.ShowBlankCount__c)}</b>
+				</p>
+			</div>
+		</apex:PageBlock>
+		
+		<!-- 	---------End Of first block------------------------------------     -->
+	
+		<!-- ---------Strat Of Secound block------------------------------------      -->
+		<apex:pageBlock >
+			<apex:pageBlockButtons >
+                <apex:commandButton action="{!SaveAnswerRecords}" value="Save"/>
+            </apex:pageBlockButtons>
+			<apex:pageBlockSection title="Question & Answer">
+				<apex:outputPanel >
+	                <apex:repeat value="{!mapProductName_lstWrapper}" var="MapOfQAWrapper">
+	                    <div>
+	                        <div>{!MapOfQAWrapper} </div>
+	                        <div>
+	                            <ul>
+	                                <apex:repeat value="{!mapProductName_lstWrapper[MapOfQAWrapper]}" var="lstAnswerWrapper">
+	                                    <li>
+		                                    <p>
+		                                    	<apex:outPutText value="{!lstAnswerWrapper.objQuestion.Name}"/> 
+		                                    	<p>
+			                                    	<apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Text',true,false)}">
+														<apex:inputText value="{!lstAnswerWrapper.objAnswer.Answer__c}" />
+													</apex:outputPanel>
+												</p>
+												<p>
+													<apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Checkbox',true,false)}">
+														<apex:inputCheckBox value="{!lstAnswerWrapper.objAnswer.Answer__c}"/>
+													</apex:outputPanel>
+												</p>
+												<p>
+													<apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Picklist',true,false)}">
+														<apex:selectList value="{!lstAnswerWrapper.objAnswer.Questions__r.Related_Picklist_Values__c}"/>
+													</apex:outputPanel>
+		                                    	</p>
+	                                    	</p>
+	                                    </li>
+	                                </apex:repeat>
+	                            </ul>
+	                        </div>
+	                    </div>
+	                </apex:repeat>
+            	</apex:outputPanel>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+		<!-- 		---------End Of Secound block------------------------------------     -->
 	</apex:form>
+	
 </apex:page>

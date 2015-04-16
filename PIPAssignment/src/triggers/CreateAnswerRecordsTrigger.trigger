@@ -19,23 +19,23 @@ trigger CreateAnswerRecordsTrigger on OpportunityLineItem (after insert) {
 			mapProductId_OppId.put(objOLI.Product2Id,objOLI.OpportunityId);
 		}
 		
-		for(Product2 objProduct : [	Select Id ,Product_Group__c 
-									From Product2 
-									Where  Id In : mapProductId_OppId.KeySet()] )	{
+		for(Product2 objProduct : [	SELECT Id ,Product_Group__c 
+									FROM Product2 
+									WHERE  Id In : mapProductId_OppId.KeySet()] ) {
 		
 			setOfProductGroup.add(objProduct.Product_Group__c);
 		}
 		
-		for(Product_Group__c objProductGroup : [ Select Id,(Select Id From Products__r), (Select Id From Questions__r)
-												 From Product_Group__c
-												 Where Id In : setOfProductGroup 
-												]) {
+		for(Product_Group__c objProductGroup : [ SELECT Id,(SELECT Id FROM Products__r), (SELECT Id FROM Questions__r)
+												 FROM Product_Group__c
+												 WHERE Id In : setOfProductGroup ]) {
 													
 			if(mapProductGroup_OppProduct.containskey(objProductGroup.Id)){
 				
 				mapProductGroup_OppProduct.get(objProductGroup.Id).add(objProductGroup.Products__r);
 			}
 			else{
+				
 				mapProductGroup_OppProduct.put(objProductGroup.Id,new List<Product2>{objProductGroup.Products__r});
 			}
 			
