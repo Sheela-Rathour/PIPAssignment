@@ -16,9 +16,10 @@
 		<!-- 	---------End Of first block------------------------------------     -->
 	
 		<!-- ---------Strat Of Secound block------------------------------------      -->
-		<apex:pageBlock >
+		<apex:pageBlock > 
 			<apex:pageBlockButtons >
                 <apex:commandButton action="{!SaveAnswerRecords}" value="Save"/>
+                <apex:commandButton action="{!cancelAnswerRecords}" value="Cancel"/>
             </apex:pageBlockButtons>
 			<apex:pageBlockSection title="Question & Answer">
 				<apex:outputPanel >
@@ -30,7 +31,7 @@
 	                                <apex:repeat value="{!mapProductName_lstWrapper[MapOfQAWrapper]}" var="lstAnswerWrapper">
 	                                    <li>
 		                                    <p>
-		                                    	<apex:outPutText value="{!lstAnswerWrapper.objQuestion.Name}"/> 
+		                                    	<apex:outPutText value="{!lstAnswerWrapper.objQuestion.Question__c}"/> 
 		                                    	<p>
 			                                    	<apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Text',true,false)}">
 														<apex:inputText value="{!lstAnswerWrapper.objAnswer.Answer__c}" />
@@ -43,7 +44,10 @@
 												</p>
 												<p>
 													<apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Picklist',true,false)}">
-														<apex:selectList value="{!lstAnswerWrapper.objAnswer.Questions__r.Related_Picklist_Values__c}"/>
+<!-- 														<apex:selectList value="{!lstAnswerWrapper.objAnswer.Questions__r.Related_Picklist_Values__c}"/> -->
+														<apex:selectList id="choseValue" value="{!strValueSelcted}" size="1">
+             												<apex:selectOptions value="{!lstSelectOPtion}"/>
+            											</apex:selectList>
 													</apex:outputPanel>
 		                                    	</p>
 	                                    	</p>

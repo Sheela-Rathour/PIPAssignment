@@ -5,9 +5,12 @@
 */
 public with sharing class QA_On_OpportunityController {
 	
+	//Public Varibales
 	public map<String,List<QA_Wrapper>> mapProductName_lstWrapper 	{get;set;}
 	public boolean pageMessage										{get;set;}
-	public List<String>lstQuestionsPicklistvalues					{get;set;}
+	public List<SelectOption> lstSelectOption						{get;set;}
+	public List<SelectOption> lstAssociatedSelectOption				{get;set;}
+	public String strValueSelcted									{get;set;}
 	public String strOpportunityId;
 	
 	//Wrapper Class
@@ -32,7 +35,7 @@ public with sharing class QA_On_OpportunityController {
 		map<Id,Questions__c> mapQuesId_Question = new map<Id,Questions__c>();
 		mapProductName_lstWrapper = new map<String,List<QA_Wrapper>>(); 
 		set<Id> setOfOppRelatedProductIds = new set<Id>();
-		lstQuestionsPicklistvalues =  new List<String>();  
+		lstSelectOption =  new list<SelectOption>();  
 		pageMessage = false;
 		
 		strOpportunityId = Apexpages.currentPage().getParameters().get('Id');
@@ -41,9 +44,13 @@ public with sharing class QA_On_OpportunityController {
 
 		List<Schema.PicklistEntry> lstOfQuestions_PicklistEntry = QuestionrelatedPicklist.getPicklistValues();
 		
-		for(integer i=0;i<lstOfQuestions_PicklistEntry.Size();i++ ) {
-			
-			lstQuestionsPicklistvalues.add(lstOfQuestions_PicklistEntry[i].getvalue());
+		SelectOption firstOption = new SelectOption('', ' - Select Options' + ' -');
+	     
+		lstSelectOption.add(firstOption);
+		
+		for (Schema.PicklistEntry selectPickListValues : lstOfQuestions_PicklistEntry) { //for all values in the picklist list
+	      
+			lstSelectOption.add(new SelectOption(selectPickListValues.getValue(),selectPickListValues.getValue()));
 		}
 		
 		if(strOpportunityId == null) {
@@ -86,7 +93,8 @@ public with sharing class QA_On_OpportunityController {
 			
 			for(Product2 objProduct : [	SELECT Id ,Product_Group__c 
 										FROM Product2 
-										WHERE  Id In : setOfOppRelatedProductIds] )	{
+										WHERE  Id In : setOfOppRelatedProductIds
+										AND Product_Group__c <> NULL] )	{
 			
 				mapProductGroupId_ProductId.put(objProduct.Id,objProduct.Product_Group__c);
 			}
@@ -99,7 +107,7 @@ public with sharing class QA_On_OpportunityController {
 			}
 			
 			for(Answer__c objAnswer : [	SELECT Questions__c,Questions__r.Type__c,Questions__r.Question__c, Product__c,Product__r.Name, 
-										Opportunity__c,Questions__r.Related_Picklist_Values__c,Questions__r.Name ,Answer__c 
+										Opportunity__c,Questions__r.Related_Picklist_Values__c,Questions__r.Name ,Answer__c,ShowCount__c,Questions__r.Associated_Picklist_Values__c 
 										FROM Answer__c
 										WHERE Opportunity__c =: strOpportunityId
 										AND Questions__c = : mapQuesId_Question.keySet() ]) {
@@ -131,12 +139,21 @@ public with sharing class QA_On_OpportunityController {
 	*/
 	public Pagereference SaveAnswerRecords() {
 		
-		try{
-			List<Answer__c> lstAnswerToUpdate = new List<Answer__c>();
+		try {
+			list<Answer__c> lstAnswerToUpdate = new list<Answer__c>();
 			
 			for(List<QA_Wrapper> lstWrapper : mapProductName_lstWrapper.values()) {
 				
 				for(QA_Wrapper objWrapper : lstWrapper) {
+					
+					if(objWrapper.objAnswer.Answer__c != null &&(objWrapper.objAnswer.Answer__c != 'false') && (objWrapper.objAnswer.Answer__c != '' || objWrapper.objAnswer.Answer__c == 'true')) {
+						
+						objWrapper.objAnswer.ShowCount__c = true;
+					}
+					else {
+						
+						objWrapper.objAnswer.ShowCount__c = false;
+					}
 					
 					lstAnswerToUpdate.add(objWrapper.objAnswer);
 				}
@@ -145,6 +162,7 @@ public with sharing class QA_On_OpportunityController {
 				
 				update lstAnswerToUpdate;
 			}
+			
 			PageReference objPageReference = new PageReference('/' + strOpportunityId);
 			return objPageReference;
 		}
@@ -153,5 +171,16 @@ public with sharing class QA_On_OpportunityController {
     		system.debug('==========Exception==============='+e.getLineNumber());
     		return null;
     	}
+	}
+	
+	/**
+	* Name			: cancelAnswerRecords
+	* Parameters	: None
+	* Description 	: cancel all the process
+	*/
+	public Pagereference cancelAnswerRecords() {
+		
+		PageReference objPageReference = new PageReference('/' + strOpportunityId);
+		return objPageReference;
 	}
 }
