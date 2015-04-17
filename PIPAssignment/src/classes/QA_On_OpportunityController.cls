@@ -1,7 +1,8 @@
 /**
 * @ClassName    : QA_On_OpportunityController
 * @CreatedOn    : 4/14/2015
-* @Description  : Controller class for QA_On_OpportunityPage. Controller for assessment of associated Question and Answer for closed deal of opportunity.
+* @Description  : Controller class for QA_On_OpportunityPage. Controller for assessment of associated Question and Answer for 
+				  closed deal of opportunity.
 */
 public with sharing class QA_On_OpportunityController {
 	
@@ -9,20 +10,19 @@ public with sharing class QA_On_OpportunityController {
 	public map<String,List<QA_Wrapper>> mapProductName_lstWrapper 	{get;set;}
 	public boolean pageMessage										{get;set;}
 	public List<SelectOption> lstSelectOption						{get;set;}
-	public List<SelectOption> lstAssociatedSelectOption				{get;set;}
-	public String strValueSelcted									{get;set;}
 	public String strOpportunityId;
 	
 	//Wrapper Class
 	public class QA_Wrapper	{
 		
+		//Wrapper Class Variables
 		public Questions__c objQuestion 							{get;set;}
 		public Answer__c objAnswer									{get;set;}
 		public String strQuestionType								{get;set;}
 		
 		//Wrapper Constructor
 		public QA_Wrapper(Questions__c question, Answer__c answer, String questionType) {
-		
+			
 			objQuestion = question;
 			objAnswer = answer;
 			strQuestionType = questionType;
@@ -32,14 +32,18 @@ public with sharing class QA_On_OpportunityController {
 	//*Constructor
 	public QA_On_OpportunityController(apexPages.standardController objOpportunity) {
 		
+		//Local Variable Declaration
 		map<Id,Questions__c> mapQuesId_Question = new map<Id,Questions__c>();
-		mapProductName_lstWrapper = new map<String,List<QA_Wrapper>>(); 
 		set<Id> setOfOppRelatedProductIds = new set<Id>();
+		
+		//Public Variable initialisation
+		mapProductName_lstWrapper = new map<String,List<QA_Wrapper>>(); 
 		lstSelectOption =  new list<SelectOption>();  
 		pageMessage = false;
 		
 		strOpportunityId = Apexpages.currentPage().getParameters().get('Id');
 		
+		//fetching the Question Picklist value using describe Call
 		Schema.DescribeFieldResult QuestionrelatedPicklist = Questions__c.Related_Picklist_Values__c.getDescribe();
 
 		List<Schema.PicklistEntry> lstOfQuestions_PicklistEntry = QuestionrelatedPicklist.getPicklistValues();
@@ -53,6 +57,7 @@ public with sharing class QA_On_OpportunityController {
 			lstSelectOption.add(new SelectOption(selectPickListValues.getValue(),selectPickListValues.getValue()));
 		}
 		
+		//Check For Opportunity Id is null or not
 		if(strOpportunityId == null) {
 			
 		    pageMessage = true;
@@ -70,10 +75,10 @@ public with sharing class QA_On_OpportunityController {
 		    if(setOfOppRelatedProductIds.isEmpty()) {
 		    
 		    	pageMessage = true;
-            	ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR,'No Questions to answer yet. Please add Products to the Opportunity.'));
+            	ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.Info,'No Questions to answer yet. Please add Products to the Opportunity.'));
 		    }
 		    else {
-		    	
+		    	//calling method
 		    	fetchProductGroupQuestionAnswer(setOfOppRelatedProductIds);
 		    }
 		} 
@@ -117,7 +122,9 @@ public with sharing class QA_On_OpportunityController {
 					if(mapProductName_lstWrapper.containsKey(objAnswer.Product__r.Name)) {
 					
 						List<QA_Wrapper> lstOfQA_On_OpportunityWrapper = mapProductName_lstWrapper.get(objAnswer.Product__r.Name);
+						
 						lstOfQA_On_OpportunityWrapper.add(new QA_Wrapper(mapQuesId_Question.get(objAnswer.Questions__c),objAnswer,objAnswer.Questions__r.Type__c));
+						
 						mapProductName_lstWrapper.put(objAnswer.Product__r.Name,lstOfQA_On_OpportunityWrapper);
 						
 					} else {
@@ -128,8 +135,8 @@ public with sharing class QA_On_OpportunityController {
 			}
 		}
 		catch(Exception e) {
-    	
-    		system.debug('==========Exception==============='+e.getLineNumber());
+    		
+    		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,+e.getMessage()+e.getLineNumber()));
     	}
 	}
 	/**
@@ -154,21 +161,23 @@ public with sharing class QA_On_OpportunityController {
 						
 						objWrapper.objAnswer.ShowCount__c = false;
 					}
-					
 					lstAnswerToUpdate.add(objWrapper.objAnswer);
 				}
 			}
+			
+			//Update the Answer records
 			if(!lstAnswerToUpdate.isEmpty()) {
 				
 				update lstAnswerToUpdate;
 			}
 			
+			//Redirect page to the opportunity detail page
 			PageReference objPageReference = new PageReference('/' + strOpportunityId);
 			return objPageReference;
 		}
 		catch(Exception e) {
-    	
-    		system.debug('==========Exception==============='+e.getLineNumber());
+    		
+    		ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,+e.getMessage()+e.getLineNumber()));
     		return null;
     	}
 	}

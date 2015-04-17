@@ -12,6 +12,7 @@ public with sharing class CreateAnswerRecordHandler {
 	*/
 	public void insertAnswerRecord(List<OpportunityLineItem> lstOpportunityLineItem) {
 		
+		//Local Varibales
 		map<Id,Id> mapProductId_OppId = new map<Id,Id>();
 		set<Id> setOfProductGroup = new set<Id>();
 		list<Answer__c> lstAnswer = new list<Answer__c>();
