@@ -17,11 +17,13 @@ public with sharing class CreateAnswerRecordHandler {
 		set<Id> setOfProductGroup = new set<Id>();
 		list<Answer__c> lstAnswer = new list<Answer__c>();
 		
+		//fetching the Id of opportunity and related product
 		for(OpportunityLineItem objOLI : lstOpportunityLineItem) {
 			
 			mapProductId_OppId.put(objOLI.Product2Id,objOLI.OpportunityId);
 		}
 		
+		//fetching the all the productgroup id associated with the product related to the opportunity
 		for(Product2 objProduct : [	SELECT Id ,Product_Group__c 
 									FROM Product2 
 									WHERE  Id In : mapProductId_OppId.KeySet()
@@ -30,6 +32,7 @@ public with sharing class CreateAnswerRecordHandler {
 			setOfProductGroup.add(objProduct.Product_Group__c);
 		}
 		
+		//insert the answer based on the product group
 		for(Product_Group__c objProductGroup : [ SELECT Id,(SELECT Id FROM Products__r), (SELECT Id FROM Questions__r)
 												 FROM Product_Group__c
 												 WHERE Id In : setOfProductGroup ]) {
@@ -46,7 +49,7 @@ public with sharing class CreateAnswerRecordHandler {
 				}
 			}
 	 	}
-	 	//Check For List Of answer is empty or not
+	 	//Check For List Of answer is empty or not and insert the answers
 	 	if(!lstAnswer.isEmpty()) {
 	 		
 	 		insert lstAnswer;

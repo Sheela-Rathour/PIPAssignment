@@ -21,61 +21,61 @@
  */
 @isTest(seeAllData = true)
 private class Test_QA_On_OpportunityController {
-	
-	/**
-	* Name			: TestQAOnOpportunityTrigger
-	* Description 	: Test the functionality of Oli Trigger 
-	*/
+    
+    /**
+    * Name          : TestQAOnOpportunityTrigger
+    * Description   : Test the functionality of Oli Trigger 
+    */
     static testMethod void TestQAOnOpportunityTrigger() {
         
         List<Opportunity> lstOpportunity = new List<Opportunity>();
         
-        Opportunity objOpportunity1 = new Opportunity(	Name = 'Test Opportunity 001',
-														StageName = 'Closed',
-        												CloseDate = Date.today()
-        											);
-        											
-		lstOpportunity.add(objOpportunity1);
-		
-		Opportunity objOpportunity2 = new Opportunity(	Name = 'Test Opp 002',
-														StageName = 'Closed',
-        												CloseDate = Date.today()
-        											);
-        											
-		lstOpportunity.add(objOpportunity2);
-		
-		insert lstOpportunity;
-		
-		List<Product_Group__c> lstProductGroup = new List<Product_Group__c>();
-		
-		Product_Group__c objProductGroup = new Product_Group__c ( Name = 'PG001');
-		
-		lstProductGroup.add(objProductGroup);
-		
-		Product_Group__c objProductGroup1 = new Product_Group__c ( Name = 'PG002');
-		
-		lstProductGroup.add(objProductGroup1);
-		
-		insert lstProductGroup;
-		
-		List<Product2> lstProduct = new List<Product2>();
-		
-		Product2 objProduct = new Product2( Name ='Alto',
-									        ProductCode ='P001',
-									        IsActive = true,
-									        Product_Group__c = objProductGroup.Id
-									      );
-									      
+        Opportunity objOpportunity1 = new Opportunity(  Name = 'Test Opportunity 001',
+                                                        StageName = 'Closed',
+                                                        CloseDate = Date.today()
+                                                    );
+                                                    
+        lstOpportunity.add(objOpportunity1);
+        
+        Opportunity objOpportunity2 = new Opportunity(  Name = 'Test Opp 002',
+                                                        StageName = 'Closed',
+                                                        CloseDate = Date.today()
+                                                    );
+                                                    
+        lstOpportunity.add(objOpportunity2);
+        
+        insert lstOpportunity;
+        
+        List<Product_Group__c> lstProductGroup = new List<Product_Group__c>();
+        
+        Product_Group__c objProductGroup = new Product_Group__c ( Name = 'PG001');
+        
+        lstProductGroup.add(objProductGroup);
+        
+        Product_Group__c objProductGroup1 = new Product_Group__c ( Name = 'PG002');
+        
+        lstProductGroup.add(objProductGroup1);
+        
+        insert lstProductGroup;
+        
+        List<Product2> lstProduct = new List<Product2>();
+        
+        Product2 objProduct = new Product2( Name ='Alto',
+                                            ProductCode ='P001',
+                                            IsActive = true,
+                                            Product_Group__c = objProductGroup.Id
+                                          );
+                                          
         lstProduct.add(objProduct);
         
         Product2 objProduct1 = new Product2( Name = 'Spice',
-									         ProductCode = 'S001',
-									         IsActive = true,
-									         Product_Group__c = objProductGroup1.Id
-									     	);
-									     	
-     	lstProduct.add(objProduct1);
-     	
+                                             ProductCode = 'S001',
+                                             IsActive = true,
+                                             Product_Group__c = objProductGroup1.Id
+                                            );
+                                            
+        lstProduct.add(objProduct1);
+        
         insert lstProduct;
         
         Pricebook2 objPBE = ([select Id from Pricebook2 where IsActive = true AND IsStandard = true limit 1 ]);
@@ -83,78 +83,78 @@ private class Test_QA_On_OpportunityController {
         List<PriceBookEntry> lstPriceBookEntry = new List<PriceBookEntry>();
         
         PriceBookEntry objPBEMobile = new PriceBookEntry( Pricebook2Id = objPBE.Id ,
-        												  Product2Id = objProduct1.Id,
-        												  UseStandardPrice = false,
-        												  UnitPrice = 100,
-        												  IsActive = true
-        												);
-        												
+                                                          Product2Id = objProduct1.Id,
+                                                          UseStandardPrice = false,
+                                                          UnitPrice = 100,
+                                                          IsActive = true
+                                                        );
+                                                        
         lstPriceBookEntry.add(objPBEMobile);
         
-		PriceBookEntry objPBEVehicle = new PriceBookEntry(	Pricebook2Id = objPBE.Id ,
-															Product2Id = objProduct.Id,
-															UseStandardPrice = false,
-															UnitPrice = 100,
-															IsActive = true
-														 );
-														 
-		lstPriceBookEntry.add(objPBEVehicle);	
-		
-		insert lstPriceBookEntry;
-		
-		List<Questions__c> lstQuestion = new List<Questions__c>();
-		
-		Questions__c objQuestion1 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question1?'
-													);
-		lstQuestion.add(objQuestion1);
-		
-		Questions__c objQuestion2 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
-													   Type__c = 'Checkbox',
-													   Question__c = 'This is a Sample Question2?'
-													);
-													
-		lstQuestion.add(objQuestion2);
-		
-		Questions__c objQuestion3 = new Questions__c ( Product_Group__c = objProductGroup.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question3?'
-													);
-													
-		lstQuestion.add(objQuestion3);
-		
-		Questions__c objQuestion4 = new Questions__c ( Product_Group__c = objProductGroup.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question4?'
-													);
-													
-		lstQuestion.add(objQuestion4);
-		
-		insert lstQuestion;
-		
-		List<OpportunityLineItem> lstOpportunityLineItem = new List<OpportunityLineItem>();
-		
-		OpportunityLineItem objOLI = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
-													          OpportunityId = objOpportunity1.Id,
-													          PricebookEntryId = objPBEMobile.Id,
-													          Quantity = 1
-         													);
-         													
+        PriceBookEntry objPBEVehicle = new PriceBookEntry(  Pricebook2Id = objPBE.Id ,
+                                                            Product2Id = objProduct.Id,
+                                                            UseStandardPrice = false,
+                                                            UnitPrice = 100,
+                                                            IsActive = true
+                                                         );
+                                                         
+        lstPriceBookEntry.add(objPBEVehicle);   
+        
+        insert lstPriceBookEntry;
+        
+        List<Questions__c> lstQuestion = new List<Questions__c>();
+        
+        Questions__c objQuestion1 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question1?'
+                                                    );
+        lstQuestion.add(objQuestion1);
+        
+        Questions__c objQuestion2 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
+                                                       Type__c = 'Checkbox',
+                                                       Question__c = 'This is a Sample Question2?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion2);
+        
+        Questions__c objQuestion3 = new Questions__c ( Product_Group__c = objProductGroup.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question3?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion3);
+        
+        Questions__c objQuestion4 = new Questions__c ( Product_Group__c = objProductGroup.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question4?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion4);
+        
+        insert lstQuestion;
+        
+        List<OpportunityLineItem> lstOpportunityLineItem = new List<OpportunityLineItem>();
+        
+        OpportunityLineItem objOLI = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
+                                                              OpportunityId = objOpportunity1.Id,
+                                                              PricebookEntryId = objPBEMobile.Id,
+                                                              Quantity = 1
+                                                            );
+                                                            
         lstOpportunityLineItem.add(objOLI);
         
-      	OpportunityLineItem objOLI1 = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
-													           OpportunityId = objOpportunity2.Id,
-													           PricebookEntryId = objPBEVehicle.Id,
-													           Quantity = 1
-         													);
-         													
-        lstOpportunityLineItem.add(objOLI1);	
+        OpportunityLineItem objOLI1 = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
+                                                               OpportunityId = objOpportunity2.Id,
+                                                               PricebookEntryId = objPBEVehicle.Id,
+                                                               Quantity = 1
+                                                            );
+                                                            
+        lstOpportunityLineItem.add(objOLI1);    
         
-        insert 	lstOpportunityLineItem	;	
+        insert  lstOpportunityLineItem  ;   
         
-        List<Answer__c> lstAnswer = new List<Answer__c>([SELECT Id,Product__r.Name,Questions__r.Question__c FROM Answer__c WHERE Opportunity__c In : lstOpportunity  ]);	
-        		
+        List<Answer__c> lstAnswer = new List<Answer__c>([SELECT Id,Product__r.Name,Questions__r.Question__c FROM Answer__c WHERE Opportunity__c In : lstOpportunity  ]);    
+                
         //***SUCCESS*** : No of inserted Answer records are 4
         system.assertEquals(lstAnswer.size(),4);
         
@@ -171,57 +171,57 @@ private class Test_QA_On_OpportunityController {
     }
     
     /**
-	* Name			: TestQAOnOpportunityController
-	* Description 	: Test the functionality of OLI Controller and vf page
-	*/
+    * Name          : TestQAOnOpportunityController
+    * Description   : Test the functionality of OLI Controller and vf page
+    */
     static testMethod void TestQAOnOpportunityController() {
-		
-    	List<Opportunity> lstOpportunity = new List<Opportunity>();
-    	
-        Opportunity objOpportunity1 = new Opportunity(	Name = 'Test Opportunity 001',
-														StageName = 'Closed',
-        												CloseDate = Date.today()
-        											);
-        											
-		lstOpportunity.add(objOpportunity1);
-		
-		Opportunity objOpportunity2 = new Opportunity(	Name = 'Test Opp 002',
-														StageName = 'Closed',
-        												CloseDate = Date.today()
-        											);
-        											
-		lstOpportunity.add(objOpportunity2);
-		
-		insert lstOpportunity;
-		
-		List<Product_Group__c> lstProductGroup = new List<Product_Group__c>();
-		
-		Product_Group__c objProductGroup = new Product_Group__c ( Name = 'PG001');
-		
-		lstProductGroup.add(objProductGroup);
-		
-		Product_Group__c objProductGroup1 = new Product_Group__c ( Name = 'PG002');
-		
-		lstProductGroup.add(objProductGroup1);
-		
-		insert lstProductGroup;
-		
-		List<Product2> lstProduct = new List<Product2>();
-		
-		Product2 objProduct = new Product2( Name ='Alto',
-									        ProductCode ='P001',
-									        IsActive = true,
-									        Product_Group__c = objProductGroup.Id
-									      );
+        
+        List<Opportunity> lstOpportunity = new List<Opportunity>();
+        
+        Opportunity objOpportunity1 = new Opportunity(  Name = 'Test Opportunity 001',
+                                                        StageName = 'Closed',
+                                                        CloseDate = Date.today()
+                                                    );
+                                                    
+        lstOpportunity.add(objOpportunity1);
+        
+        Opportunity objOpportunity2 = new Opportunity(  Name = 'Test Opp 002',
+                                                        StageName = 'Closed',
+                                                        CloseDate = Date.today()
+                                                    );
+                                                    
+        lstOpportunity.add(objOpportunity2);
+        
+        insert lstOpportunity;
+        
+        List<Product_Group__c> lstProductGroup = new List<Product_Group__c>();
+        
+        Product_Group__c objProductGroup = new Product_Group__c ( Name = 'PG001');
+        
+        lstProductGroup.add(objProductGroup);
+        
+        Product_Group__c objProductGroup1 = new Product_Group__c ( Name = 'PG002');
+        
+        lstProductGroup.add(objProductGroup1);
+        
+        insert lstProductGroup;
+        
+        List<Product2> lstProduct = new List<Product2>();
+        
+        Product2 objProduct = new Product2( Name ='Alto',
+                                            ProductCode ='P001',
+                                            IsActive = true,
+                                            Product_Group__c = objProductGroup.Id
+                                          );
         lstProduct.add(objProduct);
         
         Product2 objProduct1 = new Product2( Name = 'Spice',
-									         ProductCode = 'S001',
-									         IsActive = true,
-									         Product_Group__c = objProductGroup1.Id
-									     	);
-     	lstProduct.add(objProduct1);
-     	
+                                             ProductCode = 'S001',
+                                             IsActive = true,
+                                             Product_Group__c = objProductGroup1.Id
+                                            );
+        lstProduct.add(objProduct1);
+        
         insert lstProduct;
         
         Pricebook2 objPBE = ([select Id from Pricebook2 where IsActive = true AND IsStandard=true limit 1 ]);
@@ -229,83 +229,83 @@ private class Test_QA_On_OpportunityController {
         List<PriceBookEntry> lstPriceBookEntry = new List<PriceBookEntry>();
         
         PriceBookEntry objPBEMobile = new PriceBookEntry( Pricebook2Id = objPBE.Id ,
-        												  Product2Id = objProduct1.Id,
-        												  UseStandardPrice = false,
-        												  UnitPrice = 100,
-        												  IsActive = true
-        												);
-        												
+                                                          Product2Id = objProduct1.Id,
+                                                          UseStandardPrice = false,
+                                                          UnitPrice = 100,
+                                                          IsActive = true
+                                                        );
+                                                        
         lstPriceBookEntry.add(objPBEMobile);
         
-		PriceBookEntry objPBEVehicle = new PriceBookEntry(	Pricebook2Id = objPBE.Id ,
-															Product2Id = objProduct.Id,
-															UseStandardPrice = false,
-															UnitPrice = 100,
-															IsActive = true
-														 );
-														 
-		lstPriceBookEntry.add(objPBEVehicle);	
-		
-		insert lstPriceBookEntry;
-		
-		List<Questions__c> lstQuestion = new List<Questions__c>();
-		
-		Questions__c objQuestion1 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question1?'
-													);
-													
-		lstQuestion.add(objQuestion1);
-		
-		Questions__c objQuestion2 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
-													   Type__c = 'Checkbox',
-													   Question__c = 'This is a Sample Question2?'
-													);
-													
-		lstQuestion.add(objQuestion2);
-		
-		Questions__c objQuestion3 = new Questions__c ( Product_Group__c = objProductGroup.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question3?'
-													);
-													
-		lstQuestion.add(objQuestion3);
-		
-		Questions__c objQuestion4 = new Questions__c ( Product_Group__c = objProductGroup.Id,
-													   Type__c = 'Text',
-													   Question__c = 'This is a Sample Question4?'
-													);
-													
-		lstQuestion.add(objQuestion4);
-		
-		insert lstQuestion;
-		
-		List<OpportunityLineItem> lstOpportunityLineItem = new List<OpportunityLineItem>();
-		
-		OpportunityLineItem objOLI = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
-													          OpportunityId = objOpportunity1.Id,
-													          PricebookEntryId = objPBEMobile.Id,
-													          Quantity = 1
-         													);
-         													
+        PriceBookEntry objPBEVehicle = new PriceBookEntry(  Pricebook2Id = objPBE.Id ,
+                                                            Product2Id = objProduct.Id,
+                                                            UseStandardPrice = false,
+                                                            UnitPrice = 100,
+                                                            IsActive = true
+                                                         );
+                                                         
+        lstPriceBookEntry.add(objPBEVehicle);   
+        
+        insert lstPriceBookEntry;
+        
+        List<Questions__c> lstQuestion = new List<Questions__c>();
+        
+        Questions__c objQuestion1 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question1?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion1);
+        
+        Questions__c objQuestion2 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
+                                                       Type__c = 'Checkbox',
+                                                       Question__c = 'This is a Sample Question2?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion2);
+        
+        Questions__c objQuestion3 = new Questions__c ( Product_Group__c = objProductGroup.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question3?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion3);
+        
+        Questions__c objQuestion4 = new Questions__c ( Product_Group__c = objProductGroup.Id,
+                                                       Type__c = 'Text',
+                                                       Question__c = 'This is a Sample Question4?'
+                                                    );
+                                                    
+        lstQuestion.add(objQuestion4);
+        
+        insert lstQuestion;
+        
+        List<OpportunityLineItem> lstOpportunityLineItem = new List<OpportunityLineItem>();
+        
+        OpportunityLineItem objOLI = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
+                                                              OpportunityId = objOpportunity1.Id,
+                                                              PricebookEntryId = objPBEMobile.Id,
+                                                              Quantity = 1
+                                                            );
+                                                            
         lstOpportunityLineItem.add(objOLI);
         
-      	OpportunityLineItem objOLI1 = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
-													           OpportunityId = objOpportunity2.Id,
-													           PricebookEntryId = objPBEVehicle.Id,
-													           Quantity = 1
-         													);
-         													
-        lstOpportunityLineItem.add(objOLI1);	
+        OpportunityLineItem objOLI1 = new OpportunityLineItem( UnitPrice = objPBEMobile.UnitPrice,
+                                                               OpportunityId = objOpportunity2.Id,
+                                                               PricebookEntryId = objPBEVehicle.Id,
+                                                               Quantity = 1
+                                                            );
+                                                            
+        lstOpportunityLineItem.add(objOLI1);    
         
-        insert 	lstOpportunityLineItem	;	
+        insert  lstOpportunityLineItem  ;   
         
         //Inserted Ansewr Records
         
-        List<Answer__c> lstAnswerOfProduct = new List<Answer__c>([	SELECT Id,Answer__c,Opportunity__c,Opportunity__r.ShowAnsweredCount__c,Questions__r.Question__c,Product__c,Product__r.Name,Questions__r.Type__c 
-        															FROM Answer__c 
-        															WHERE Opportunity__c =: lstOpportunity[0].Id 
-        															AND Questions__c =: lstQuestion]);
+        List<Answer__c> lstAnswerOfProduct = new List<Answer__c>([  SELECT Id,Answer__c,Opportunity__c,Opportunity__r.ShowAnsweredCount__c,Questions__r.Question__c,Product__c,Product__r.Name,Questions__r.Type__c 
+                                                                    FROM Answer__c 
+                                                                    WHERE Opportunity__c =: lstOpportunity[0].Id 
+                                                                    AND Questions__c =: lstQuestion]);
         
         //Update the Answer Records Answer Value
         lstAnswerOfProduct[0].Answer__c = 'Testing';
@@ -315,14 +315,14 @@ private class Test_QA_On_OpportunityController {
         Test.StartTest();
         
         ApexPages.currentPage().getParameters().put('Id','');
-		
-		//**SUCCESS : check when Id is NULL in url
-		QA_On_OpportunityController objTest1 = new QA_On_OpportunityController(new ApexPages.StandardController(objOpportunity1));
-		
+        
+        //**SUCCESS : check when Id is NULL in url
+        QA_On_OpportunityController objTest1 = new QA_On_OpportunityController();
+        
         ApexPages.currentPage().getParameters().put('Id',objOpportunity1.id);
         
         //**Success : check when Opportunity Id is not null in url
-        QA_On_OpportunityController objTest = new QA_On_OpportunityController(new ApexPages.StandardController(objOpportunity1));
+        QA_On_OpportunityController objTest = new QA_On_OpportunityController();
         
         //update the text Field value
         lstAnswerOfProduct[0].Answer__c = 'Testing Answer After Save';
@@ -336,11 +336,11 @@ private class Test_QA_On_OpportunityController {
         //**SUCCESS : Updated value of question from the vf page on save
         system.assertEquals(lstAnswerOfProduct[0].Answer__c,'Testing Answer After Save');
         
-        Opportunity objOpportunity = [	SELECT Id, ShowAnsweredCount__c
-        								FROM Opportunity
-        								WHERE Id = : objOpportunity1.Id ];
-		
-		//**SUCCESS : check for the No of Answered Question 
+        Opportunity objOpportunity = [  SELECT Id, ShowAnsweredCount__c
+                                        FROM Opportunity
+                                        WHERE Id = : objOpportunity1.Id ];
+        
+        //**SUCCESS : check for the No of Answered Question 
         system.assertEquals(objOpportunity.ShowAnsweredCount__c,1);
         
         //Calling cancel method
