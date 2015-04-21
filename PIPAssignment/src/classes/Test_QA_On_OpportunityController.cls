@@ -105,21 +105,24 @@ private class Test_QA_On_OpportunityController {
         List<Questions__c> lstQuestion = new List<Questions__c>();
         
         Questions__c objQuestion1 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
-                                                       Type__c = 'Text',
+                                                       Type__c = 'Checkbox',
                                                        Question__c = 'This is a Sample Question1?'
+                                                       
                                                     );
         lstQuestion.add(objQuestion1);
         
         Questions__c objQuestion2 = new Questions__c ( Product_Group__c = objProductGroup1.Id,
                                                        Type__c = 'Checkbox',
-                                                       Question__c = 'This is a Sample Question2?'
+                                                       Question__c = 'This is a Sample Question2?',
+                                                       Related_Picklist_Values__c = 'Test1,Test2,Test3'
                                                     );
                                                     
         lstQuestion.add(objQuestion2);
         
         Questions__c objQuestion3 = new Questions__c ( Product_Group__c = objProductGroup.Id,
-                                                       Type__c = 'Text',
-                                                       Question__c = 'This is a Sample Question3?'
+                                                       Type__c = 'Picklist',
+                                                       Question__c = 'This is a Sample Question3?',
+                                                       Related_Picklist_Values__c = 'Test1,Test2,Test3'
                                                     );
                                                     
         lstQuestion.add(objQuestion3);
@@ -166,8 +169,8 @@ private class Test_QA_On_OpportunityController {
         //***Success**: Product Name related to that answer is 'Spice'
         system.assertEquals(lstAnswerOfProduct[0].Product__r.Name,'Spice');
         
-        //***Success**: Question Name related to that answer is 'This is a Sample Question1?'
-        system.assertEquals(lstAnswerOfProduct[0].Questions__r.Question__c,'This is a Sample Question1?');
+        //***Success**: Question Name related to that answer is 'This is a Sample Question2?'
+        system.assertEquals(lstAnswerOfProduct[0].Questions__r.Question__c,'This is a Sample Question2?');
     }
     
     /**

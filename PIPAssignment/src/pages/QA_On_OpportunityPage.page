@@ -51,8 +51,8 @@
                                                     </p>
                                                     <p>
                                                         <apex:outputPanel rendered="{!If(lstAnswerWrapper.strQuestionType =='Picklist',true,false)}">
-                                                            <apex:selectList id="choseValue" size="1">
-                                                                <apex:selectOptions value="{!lstSelectOPtion}"/>
+                                                            <apex:selectList id="choseValue" value="{!lstAnswerWrapper.strValueSelcted}" size="1">
+                                                                <apex:selectOptions value="{!lstAnswerWrapper.lstSelectOption}"/>
                                                             </apex:selectList>
                                                         </apex:outputPanel>
                                                     </p>
