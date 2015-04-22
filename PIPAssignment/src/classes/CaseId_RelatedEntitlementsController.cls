@@ -17,19 +17,19 @@ global class CaseId_RelatedEntitlementsController {
 		webservice List<ContactWrapper> lstContactWrapper;	
 		webservice List<AssetWrapper> lstAssetWrapper;	
 		webservice List<EntitlementWrapper> lstEntitlementWrapper;			
-		webservice string Fax;						
-		webservice String Phone	;					
-		webservice string Name;					
-		webservice string Id;
+		webservice string AccountFax;						
+		webservice String AccountPhone	;					
+		webservice string AccountName;					
+		webservice string AccountId;
 		webservice string errorMessage; 						
 		
 		//AccountWrapper Constructor
-		global AccountWrapper(string Fax, String Phone , string Name,string Id,List<ContactWrapper> lstContactWrapper,List<AssetWrapper> lstAssetWrapper, List<EntitlementWrapper> lstEntitlementWrapper,string errorMessage) {
+		global AccountWrapper(string AccountFax, String AccountPhone , string AccountName,string AccountId,List<ContactWrapper> lstContactWrapper,List<AssetWrapper> lstAssetWrapper, List<EntitlementWrapper> lstEntitlementWrapper,string errorMessage) {
 		    
-		    this.Fax = Fax;
-		    this.Phone = Phone;
-		    this.Name = Name;
-		    this.Id = Id;
+		    this.AccountFax = AccountFax;
+		    this.AccountPhone = AccountPhone;
+		    this.AccountName = AccountName;
+		    this.AccountId = AccountId;
 		    this.lstContactWrapper = lstContactWrapper;
 		    this.lstAssetWrapper = lstAssetWrapper;
 		    this.lstEntitlementWrapper = lstEntitlementWrapper;
@@ -46,17 +46,17 @@ global class CaseId_RelatedEntitlementsController {
 		
 		//Contact Wrapper variables
 		webservice string AccountId	;				
-		webservice string conName;					
-		webservice string Email;					
-		webservice string Department ;	
+		webservice string ContactName;					
+		webservice string ContactEmail;					
+		webservice string ContactDepartment ;	
 		
 		//ContactWrapper Constructor
-		global ContactWrapper(string AccountId, string conName, string Email,string Department ) {
+		global ContactWrapper(string AccountId, string ContactName, string ContactEmail,string ContactDepartment ) {
 		    
 		    this.AccountId = AccountId;
-		    this.conName = conName;
-		    this.Email = Email;
-		    this.Department = Department;
+		    this.ContactName = ContactName;
+		    this.ContactEmail = ContactEmail;
+		    this.ContactDepartment = ContactDepartment;
 		}		
 	}
 	
@@ -69,18 +69,18 @@ global class CaseId_RelatedEntitlementsController {
 		
 		//AssetWrapper Variables
 		webservice string AssetName;				
-		webservice string AsstStatus;					
-		webservice Decimal AsstPrice;					
-		webservice Decimal AsstQuantity;
+		webservice string AssetStatus;					
+		webservice Decimal AssetPrice;					
+		webservice Decimal AssetQuantity;
 		webservice string AccountId;
 		
 		//AssetWrapper Constructor
-		global AssetWrapper(string AssetName, string AsstStatus, Decimal AsstPrice,Decimal AsstQuantity,String AccountId) {
+		global AssetWrapper(string AssetName, string AssetStatus, Decimal AssetPrice, Decimal AssetQuantity,String AccountId) {
 		    
 		    this.AssetName = AssetName;
-		    this.AsstStatus = AsstStatus;
-		    this.AsstPrice = AsstPrice;
-		    this.AsstQuantity = AsstQuantity;
+		    this.AssetStatus = AssetStatus;
+		    this.AssetPrice = AssetPrice;
+		    this.AssetQuantity = AssetQuantity;
 		    this.AccountId = AccountId;
 		}	
 	}
@@ -116,7 +116,7 @@ global class CaseId_RelatedEntitlementsController {
 	* @Parameters	: String CaseId, String PhoneNo
 	* @Description  : fetching all the records associated with the account related to given caseId and Contact related to the given phone no 
 	*/
-	webservice static AccountWrapper getCaseRelatedRecords(String CaseId, String PhoneNo) {
+	webservice static AccountWrapper getCaseRelatedRecords(String CaseId, String PhoneNo , String strAccountNumber) {
 		
 		try {
 			
@@ -126,49 +126,99 @@ global class CaseId_RelatedEntitlementsController {
 			List<EntitlementWrapper> lstEntitlementWrapper = new List<EntitlementWrapper>();
 			AccountWrapper objAccountWrapper ;
 			
-			//fetch Account related to the given caseId
-			List<Case> lstCase = [  SELECT Account.Fax, Account.Phone, Account.Name, Account.Id, AccountId, Account.AccountNumber  
-							 		FROM Case 
-							 		WHERE Id =: CaseId limit 1];			
-			
-			//check for Case is exist or not related to the given caseId				  
-			if(!lstCase.isEmpty()) {
+			if((strAccountNumber != null) && (strAccountNumber != '') ) {
 				
-				//check for associated Account Number field of account is empty or not. if Empty, Fetch all the related contact,assets ,Entitlement records based on the AccountId
-				if(lstCase[0].Account.AccountNumber == null || lstCase[0].Account.AccountNumber == '') {
+				List<Account> lstAccount = [ SELECT Phone, Name, Id, AccountNumber,Fax
+											 FROM Account
+											 WHERE AccountNumber = : strAccountNumber
+											 limit 1];
+				
+				//check for Account is exist or not related to the accountId							 
+				if(!lstAccount.isEmpty()) {
 					
+					List<Contact> lstContact = [ SELECT Name, Email, Department, AccountId, phone
+												 FROM Contact
+												 WHERE AccountId = : lstAccount[0].Id
+												 AND phone =: PhoneNo];
 					
-					List<Account> lstAccount = [ SELECT Phone, Name, Id, AccountNumber 
+				 	if(!lstContact.isEmpty()) {
+				 		
+				 		for(Contact objContact : lstContact) {
+				 			
+				 			lstContactWrapper.add(new ContactWrapper(objContact.AccountId, objContact.Name, objContact.Email, objContact.Department));
+				 		}
+				 	}
+				 	
+				 	List<Asset> lstAssets = [ SELECT Status, Quantity, Price, Name, AccountId 
+				 							  FROM Asset
+				 							  WHERE AccountId =: lstAccount[0].Id];
+	 				if(!lstAssets.isEmpty()) {
+	 					
+	 					for(Asset objAsset : lstAssets) {
+	 						
+	 						lstAssetWrapper.add(new AssetWrapper(objAsset.Name,objAsset.Status,objAsset.Price,objAsset.Quantity,objAsset.AccountId));
+	 					}
+	 				}
+	 				
+	 				List<Entitlement> lstEntitlement = [  SELECT Type, Status, Name, IsPerIncident, AccountId 
+	 													  FROM Entitlement
+	 													  WHERE AccountId =: lstAccount[0].Id];
+	 				if(!lstEntitlement.isEmpty()) {
+	 					 
+	 					for(Entitlement objEntitlement : lstEntitlement ) {
+	 						 
+	 						lstEntitlementWrapper.add(new EntitlementWrapper(objEntitlement.Name,objEntitlement.AccountId,objEntitlement.Type,objEntitlement.IsPerIncident,objEntitlement.Status));
+	 					}
+	 				}
+	 				objAccountWrapper = new AccountWrapper(lstAccount[0].Fax,lstAccount[0].Phone,lstAccount[0].Name,lstAccount[0].Id ,lstContactWrapper,lstAssetWrapper,lstEntitlementWrapper,'');
+				}
+				else {
+					
+					//If Account is not exist related to the AccountId then display the error message
+					objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Invalid Account Number');
+				}
+			}
+			else {
+				
+				//fetch Account related to the given caseId
+				List<Case> lstCase = [  SELECT Account.Fax, Account.Phone, Account.Name, Account.Id, AccountId, Account.AccountNumber  
+								 		FROM Case 
+								 		WHERE Id =: CaseId limit 1];			
+				
+				//check for Case is exist or not related to the given caseId				  
+				if(!lstCase.isEmpty()) {
+					
+					List<Account> lstAccount = [ SELECT Phone, Name, Id
 												 FROM Account
 												 WHERE Id = : lstCase[0].AccountId 
 												 limit 1];
-					
-					//check for Account is exist or not related to the accountId							 
+												 
 					if(!lstAccount.isEmpty()) {
 						
-						List<Contact> lstContact = [ SELECT Name, Email, Department, AccountId,phone
+						List<Contact> lstContact = [ SELECT Name, Email, Department, AccountId, phone
 													 FROM Contact
 													 WHERE AccountId = : lstAccount[0].Id
 													 AND phone =: PhoneNo];
 						
-					 	if(!lstContact.isEmpty()) {
+						if(!lstContact.isEmpty()) {
 					 		
-					 		for(Contact objContact : lstContact) {
+							for(Contact objContact : lstContact) {
 					 			
-					 			lstContactWrapper.add(new ContactWrapper(objContact.AccountId, objContact.Name, objContact.Email, objContact.Department));
-					 		}
-					 	}
+								lstContactWrapper.add(new ContactWrapper(objContact.AccountId, objContact.Name, objContact.Email, objContact.Department));
+							}
+						}
 					 	
-					 	List<Asset> lstAssets = [ SELECT Status, Quantity, Price, Name, AccountId 
+						List<Asset> lstAssets = [ SELECT Status, Quantity, Price, Name, AccountId 
 					 							  FROM Asset
 					 							  WHERE AccountId =: lstAccount[0].Id];
-		 				if(!lstAssets.isEmpty()) {
-		 					
-		 					for(Asset objAsset : lstAssets) {
-		 						
-		 						lstAssetWrapper.add(new AssetWrapper(objAsset.Name,objAsset.Status,objAsset.Price,objAsset.Quantity,objAsset.AccountId));
-		 					}
-		 				}
+					 							  
+						if(!lstAssets.isEmpty()) {
+ 					
+ 							for(Asset objAsset : lstAssets) {
+ 						
+ 								lstAssetWrapper.add(new AssetWrapper(objAsset.Name,objAsset.Status,objAsset.Price,objAsset.Quantity,objAsset.AccountId));
+ 							}
+ 						}
 		 				
 		 				List<Entitlement> lstEntitlement = [  SELECT Type, Status, Name, IsPerIncident, AccountId 
 		 													  FROM Entitlement
@@ -185,61 +235,13 @@ global class CaseId_RelatedEntitlementsController {
 					else {
 						
 						//If Account is not exist related to the AccountId then display the error message
-						objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Invalid Account Id');
+						objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Account Id Does Not Exist Or Invalid Account Id');
 					}
 				}
 				else {
-					
-					List<Account> lstAccount = [ SELECT Phone, Name, Id, AccountNumber 
-												 FROM Account
-												 WHERE Id = : lstCase[0].Account.AccountNumber  
-												 limit 1 ];
-					
-					if(!lstAccount.isEmpty()) {
-						
-						List<Contact> lstContact = [ SELECT Name, Email, Department, AccountId,phone
-													 FROM Contact
-													 WHERE AccountId = : lstAccount[0].Id
-													 AND phone =: PhoneNo];
-						
-					 	if(!lstContact.isEmpty()) {
-					 		
-					 		for(Contact objContact : lstContact) {
-					 			
-					 			lstContactWrapper.add(new ContactWrapper(objContact.AccountId, objContact.Name, objContact.Email, objContact.Department));
-					 		}
-					 	}
-					 	List<Asset> lstAssets = [ SELECT Status, Quantity, Price, Name, AccountId 
-					 							  FROM Asset
-					 							  WHERE AccountId =: lstCase[0].Account.AccountNumber];
-		 				if(!lstAssets.isEmpty()) {
-		 					
-		 					for(Asset objAsset : lstAssets) {
-		 						
-		 						lstAssetWrapper.add(new AssetWrapper(objAsset.Name,objAsset.Status,objAsset.Price,objAsset.Quantity,objAsset.AccountId));
-		 					}
-		 				}
-		 				List<Entitlement> lstEntitlement = [  SELECT Type, Status, Name, IsPerIncident, AccountId 
-		 													  FROM Entitlement
-		 													  WHERE AccountId =: lstCase[0].Account.AccountNumber];
-		 				if(!lstEntitlement.isEmpty()) {
-		 					 
-		 					for(Entitlement objEntitlement : lstEntitlement ) {
-		 						 
-		 						lstEntitlementWrapper.add(new EntitlementWrapper(objEntitlement.Name,objEntitlement.AccountId,objEntitlement.Type,objEntitlement.IsPerIncident,objEntitlement.Status));
-		 					}
-		 				}
-		 				objAccountWrapper = new AccountWrapper(lstCase[0].Account.Fax,lstCase[0].Account.Phone,lstCase[0].Account.Name,lstCase[0].Account.Id ,lstContactWrapper,lstAssetWrapper,lstEntitlementWrapper,'');
-					}
-					else {
-						//When the Account Number Field value i account is not Valid then show the error Message
-						objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Invalid Account Number');
-					}
+					//When the Case record is not exist related to the given case Id
+					objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Invalid Case Id OR Case Id Does not Exist');
 				}
-			}
-			else {
-				//When the Case record is not exist related to the given case Id
-				objAccountWrapper = new AccountWrapper(null,null,null,null,null,null,null,'Invalid Case Id');
 			}
 			return objAccountWrapper;
 		}

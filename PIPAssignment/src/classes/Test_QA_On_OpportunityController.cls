@@ -42,7 +42,7 @@ private class Test_QA_On_OpportunityController {
                                                         CloseDate = Date.today()
                                                     );
                                                     
-        lstOpportunity.add(objOpportunity2);
+        lstOpportunity.add(objOpportunity2); 
         
         insert lstOpportunity;
         

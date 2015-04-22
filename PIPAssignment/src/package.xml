@@ -2,12 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>CaseId_RelatedEntitlementsController</members>
-        <members>QA_On_OpportunityController</members>
+        <members>Test_CaseId_RelatedEntitlementWebService</members>
         <name>ApexClass</name>
-    </types>
-    <types>
-        <members>QA_On_OpportunityPage</members>
-        <name>ApexPage</name>
     </types>
     <version>31.0</version>
 </Package>
